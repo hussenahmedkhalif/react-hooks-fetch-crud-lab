@@ -21,10 +21,35 @@ function QuestionForm({ addQuestion }) {
     event.preventDefault();
     const newQuestion = {
       prompt: formData.prompt,
-      answers: [formData.answer1, formData.answer2, formData.answer3, formData.answer4],
-      correctIndex: parseInt(formData.correctIndex, 10),
+      answers: [
+        formData.answer1,
+        formData.answer2,
+        formData.answer3,
+        formData.answer4,
+      ],
+      correctIndex: parseInt(formData.correctIndex),
     };
-    addQuestion(newQuestion);
+
+    fetch("http://localhost:4000/questions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newQuestion),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        addQuestion(data);
+        setFormData({
+          prompt: "",
+          answer1: "",
+          answer2: "",
+          answer3: "",
+          answer4: "",
+          correctIndex: 0,
+        });
+      })
+      .catch((error) => console.error("Error adding question:", error));
   }
 
   return (
@@ -96,6 +121,7 @@ function QuestionForm({ addQuestion }) {
 }
 
 export default QuestionForm;
+
 
 
 

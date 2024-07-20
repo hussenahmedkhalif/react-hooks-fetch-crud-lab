@@ -10,46 +10,22 @@ function App() {
   useEffect(() => {
     fetch("http://localhost:4000/questions")
       .then((response) => response.json())
-      .then((data) => {
-        setQuestions(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching questions:", error);
-      });
+      .then((data) => setQuestions(data))
+      .catch((error) => console.error("Error fetching questions:", error));
   }, []);
 
   const addQuestion = (newQuestion) => {
-    fetch("http://localhost:4000/questions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newQuestion),
-    })
-      .then((response) => response.json())
-      .then((addedQuestion) => {
-        setQuestions([...questions, addedQuestion]);
-        setPage("List");
-      })
-      .catch((error) => {
-        console.error("Error adding question:", error);
-      });
+    setQuestions([...questions, newQuestion]);
   };
 
-  const handleDelete = (id) => {
+  const deleteQuestion = (id) => {
     fetch(`http://localhost:4000/questions/${id}`, {
       method: "DELETE",
     })
-      .then((response) => {
-        if (response.ok) {
-          setQuestions(questions.filter((question) => question.id !== id));
-        } else {
-          console.error("Failed to delete question");
-        }
+      .then(() => {
+        setQuestions(questions.filter((question) => question.id !== id));
       })
-      .catch((error) => {
-        console.error("Error deleting question:", error);
-      });
+      .catch((error) => console.error("Error deleting question:", error));
   };
 
   const updateQuestion = (id, correctIndex) => {
@@ -62,13 +38,13 @@ function App() {
     })
       .then((response) => response.json())
       .then((updatedQuestion) => {
-        setQuestions(questions.map((question) =>
-          question.id === id ? updatedQuestion : question
-        ));
+        setQuestions(
+          questions.map((question) =>
+            question.id === id ? updatedQuestion : question
+          )
+        );
       })
-      .catch((error) => {
-        console.error("Error updating question:", error);
-      });
+      .catch((error) => console.error("Error updating question:", error));
   };
 
   return (
@@ -79,8 +55,8 @@ function App() {
       ) : (
         <QuestionList
           questions={questions}
-          onDelete={handleDelete}
-          onUpdate={updateQuestion}
+          deleteQuestion={deleteQuestion}
+          updateQuestion={updateQuestion}
         />
       )}
     </main>
@@ -88,5 +64,7 @@ function App() {
 }
 
 export default App;
+
+
 
 
